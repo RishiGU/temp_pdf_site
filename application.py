@@ -3,7 +3,7 @@ from flask import Flask,request,jsonify,render_template,abort,send_file
 import shutil,os,uuid
 from sanitize_filename import sanitize # https://pypi.org/project/sanitize-filename/#description # pip install sanitize_filename
 from PDF import pdf
-from io import BytesIO
+import time
 
 app = Flask(__name__)   
 app.config["DEBUG"] = True
@@ -54,17 +54,28 @@ def main() :
 def all_files():
     # return all the file in the store by date 
     files = os.listdir(app.config['UPLOAD_FOLDER'])
-    return jsonify(files)
+    # format [[name ,date,link],[...]]
 
-# @app.route('/download/<pdf_name>')
-# def download(pdf_name):
-#     print("download the file ")
-#     pdf_name = '6abe0230-8acf-4b53.pdf'
-#     file_path = os.path.join(app.config['UPLOAD_FOLDER'],pdf_name)
-#     try :
-#         return send_file(file_path,mimetype='application/pdf',attachment_filename="Your_small_pdf.pdf",as_attachment=True)
-#     except :
-#         return ""
+    # create list of data 
+    data_list = [[i,os.stat(os.path.join(app.config['UPLOAD_FOLDER'],i)).st_mtime,f'/download/{i}'] for i in files ]
+    # sorting by time
+    data_list = sorted(data_list ,key=lambda a : a[1],reverse=True)
+    # create readable data
+    data_list = [[i[0],time.ctime(i[1]),i[2]] for i in data_list]
+
+    if data_list:
+        return render_template('all_files.html' ,len = len(data_list), data_list = data_list)
+    else :
+        return ""
+
+@app.route('/download/<pdf_name>')
+def download(pdf_name):
+    print("download the file ")
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'],pdf_name)
+    try :
+        return send_file(file_path,mimetype='application/pdf',as_attachment=True)
+    except :
+        return ""
 
 
 # add route to see all the saved files and download them 
