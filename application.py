@@ -3,8 +3,9 @@ from flask import Flask,request, jsonify,render_template,abort
 import os,uuid
 from sanitize_filename import sanitize # https://pypi.org/project/sanitize-filename/#description # pip install sanitize_filename
 import shutil
+from PDF import pdf
 
-app = Flask(__name__)
+app = Flask(__name__)   
 app.config["DEBUG"] = True
 app.config['UPLOAD_FOLDER'] = 'static\\pdf_store'
 
