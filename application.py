@@ -1,56 +1,67 @@
 # python application.py
-from flask import Flask,request, jsonify,render_template,abort
-import os,uuid
+from flask import Flask,request,jsonify,render_template,abort,send_file
+import shutil,os,uuid
 from sanitize_filename import sanitize # https://pypi.org/project/sanitize-filename/#description # pip install sanitize_filename
-import shutil
 from PDF import pdf
+from io import BytesIO
 
 app = Flask(__name__)   
 app.config["DEBUG"] = True
 app.config['UPLOAD_FOLDER'] = 'static\\pdf_store'
 
 # to send the home page
-@app.route('/', methods=['GET'])
-def home() :
-    return render_template('index.html')
+@app.route('/', methods=['GET','POST'])
+def main() :
+    print(request.method)
+    if request.method == 'GET':
+        return render_template('index.html')
+    elif request.method == 'POST':
+        # to convert the images to pdf
+        # extract file data from the request
+        files = request.files.getlist("file[]")
+        if files == [] : abort(400, 'Provide at least one image') 
 
-# to convert the images to pdf
-@app.route('/create_pdf', methods=['POST'])
-def create_pdf():
-    # extract file data from the request
-    files = request.files.getlist("file[]")
-    if files == [] : abort(400, 'Provide at least one image') 
+        # use in all the names 
+        pdf_name = str(uuid.uuid4())[:18] # save with uuid_name
+        folder_to_save = os.path.join(app.config['UPLOAD_FOLDER'],pdf_name)
 
-    # use in all the names 
-    pdf_name = str(uuid.uuid4())[:18] # save with uuid_name
-    folder_to_save = os.path.join(app.config['UPLOAD_FOLDER'],pdf_name)
+        # file sanitization check
+        for file in files :
+            if sanitize(file.filename).rsplit('.',1)[1].upper() not in ['PNG','JPG','JPEG','JIFF','TIFF'] : abort(400, 'Wrong file type') 
 
-    # file sanitization check
-    for file in files :
-        if sanitize(file.filename).rsplit('.',1)[1].upper() not in ['PNG','JPG','JPEG','JIFF','TIFF'] : abort(400, 'Wrong file type') 
+        # creating the folder to save the file 
+        if not os.path.exists(folder_to_save) : os.mkdir(folder_to_save)
 
-    # creating the folder to save the file 
-    if not os.path.exists(folder_to_save) : os.mkdir(folder_to_save)
+        # saving the images
+        for image in files : image.save(os.path.join(folder_to_save, sanitize(image.filename) ) )
+        
+        # formation of pdf get_data from - folder_to_save
+        pdf_size = pdf.create_compressed_pdf(folder_to_save,pdf_name)
+        # save in app.config['UPLOAD_FOLDER']
 
-    # saving the images
-    for image in files : image.save(os.path.join(folder_to_save, sanitize(image.filename) ) )
-    
-    # formation of pdf get_data from - folder_to_save
-    pdf_size = pdf.create_compressed_pdf(folder_to_save,pdf_name)
-    # save in app.config['UPLOAD_FOLDER']
+        # save the pdf and delete the folder
+        if os.path.exists(folder_to_save) : shutil.rmtree(folder_to_save)
 
-    # save the pdf and delete the folder
-    if os.path.exists(folder_to_save) : shutil.rmtree(folder_to_save)
+        # return send_from_directory(directory = app.config['UPLOAD_FOLDER'] ,filename = pdf_name)
+        # (directory = app.config['UPLOAD_FOLDER'] ,filename = pdf_name)
+        # try : return send_from_directory(app.config['UPLOAD_FOLDER'],pdf_name, as_attachment=True)
+        # return send_file(BytesIO(os.path.join(app.config['UPLOAD_FOLDER'],pdf_name) ),as_attachment=True )
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'],pdf_name+'.pdf')
+        try : return send_file(file_path,mimetype='application/pdf',attachment_filename="Your_small_pdf.pdf",as_attachment=True)
+        except : return jsonify(pdf_name,pdf_size)
 
-    return jsonify(pdf_name,pdf_name)
 
-@app.route('/download')
-def download():
-    print("download the file ")
-    file_name = request.args.get("name")
-    # check if the file exists in the pdf directory
-    if exists : return 1
-    else : return 0
+# @app.route('/download/<pdf_name>')
+# def download(pdf_name):
+#     print("download the file ")
+#     pdf_name = '6abe0230-8acf-4b53.pdf'
+#     file_path = os.path.join(app.config['UPLOAD_FOLDER'],pdf_name)
+#     try :
+#         return send_file(file_path,mimetype='application/pdf',attachment_filename="Your_small_pdf.pdf",as_attachment=True)
+#     except :
+#         return ""
+
+
 # add route to see all the saved files and download them 
 # add route to see and delete it  
 

@@ -4,7 +4,29 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Imagers to pdf.</title>
+    <title>Images to pdf within 1MB size.</title>
+
+    <!-- fb & Whatsapp -->
+    <!-- Site Name, Title, and Description to be displayed -->
+    <meta property="og:site_name" content="PDF within 1MB">
+    <meta property="og:title" content="Images to pdf within 1MB size.">
+    <meta property="og:description" content="This site can create Images to pdf within 1MB size as required by most of the sites to submit Assignment.">
+
+    <!-- Image to display -->
+    <!-- Replace   «example.com/image01.jpg» with your own -->
+    <meta property="og:image" content="http://www.example.com/image01.jpg">
+
+    <!-- No need to change anything here -->
+    <meta property="og:type" content="website" />
+    <meta property="og:image:type" content="image/jpeg">
+
+    <!-- Size of image. Any size up to 300. Anything above 300px will not work in WhatsApp -->
+    <meta property="og:image:width" content="300">
+    <meta property="og:image:height" content="300">
+
+    <!-- Website to visit when clicked in fb or WhatsApp-->
+    <meta property="og:url" content="http://www.example.com">
+
     <style>
         *,::after,::before {
             padding: 0;
@@ -60,29 +82,32 @@
 </head>
 <body>
     <article>
-        <h1 class="center space_around">This site is under constraction 😁😂 .</h1>
+        <h1 class="center space_around">This site only creates PDF from images within 1 MB size limit.😁</h1>
         <p class="center space_around">This is the minimalism look for the site for now,
-            you can create pdf of 1 MB by uploading any images of type - [png,jpeg,jpg,JIFF,TIFF]</p>
+            you can create pdf of 1 MB by uploading any images of these types - [png,jpeg,jpg,JIFF,TIFF]</p>
+            <p class="center space_around">This project is the part of a big project which will be out soon.</p>
         <div class="uploading_div center space_around" id="uploadDiv">
             <h1 class="up_load_heading">Upload here .</h1>
-            <form id="form_request" class="uploading_form space_around" method="POST" enctype="multipart/form-data" action="/create_pdf">
+            <form id="form_request" class="uploading_form space_around" enctype="multipart/form-data" method="POST" action="/">
                 <label for="file-upload" class="form_inputs space_around upload_btn" >
                     Upload Images   
                 </label>
                 <input id="file-upload" style="display:none;" type="file" name="file[]" multiple>
                 <div id="images_selected">
                 </div>
-                <input class="space_around submit_btn form_inputs" type="submit" value="Create pdf.">
+                <input id="create_pdf" class="space_around submit_btn form_inputs" type="submit" value="Create pdf.">
             </form> 
         </div>
-        <h2 class="center space_around">upload only img files else you don't get any results .</h2>
-        <h2 class="center space_around">crop the images for better quality of images</h2>
-        <h2 class="center space_around">refresh for new pdf creation.</h2>
+        <h2 class="center space_around">upload only img files, crop the images for better quality result</h2>
+        <h2 class="center space_around">refresh to create a new pdf.</h2>
+        <p class="center space_around">Number of images is inversely proportional to the qulity of images in PDF </p>
         <h2 class="center space_around">&nbsp</h2>
-        <h2 class="center space_around">Number of images is inversely proportional to the qulity of images in PDF </h2>
     </article>
+    <p class="makil">Created by <b>Rishabh Jain</b></p>
+    <p class="makil">reach at <b>rishabh.20scse1010642@galgotiasuniversity.edu.in</b> --> <a href="Rishabh:rishabh.20scse1010642@galgotiasuniversity.edu.incom">Send email</a></p>
     <script defer>
         var file_name_list = document.querySelector("#images_selected");
+        var pdf_send_btn = document.querySelector("#create_pdf");
         var uploaded_imges = document.querySelector('#file-upload');
 
         uploaded_imges.onchange = ()=>{
@@ -104,7 +129,7 @@
                 var name_parent = document.createElement("ol");
     
                 file_names.forEach((name)=>{
-                    console.log(name);
+                    // console.log(name);
                     var btn = document.createElement("li");   // Create a <button> element
                     btn.innerHTML = name; 
                     name_parent.appendChild(btn);
@@ -118,15 +143,21 @@
         // add form prevent default
         form_r = document.querySelector("#form_request")
         form_r.addEventListener("submit",(e)=>{
-            // e.preventDefault();
-            let file_names = new Array();
+            let all_files = uploaded_imges.files ;
             if (all_files['length'] != 0){
                 console.log("have some data here")
+                // update text and make btn unusable
+                pdf_send_btn.value = "Generating PDF..."
+                pdf_send_btn.disabled = true;
             }
-            else { alert("Add atleast one image to create pdf")}
+            else { 
+                e.preventDefault();
+                alert("Add atleast one image to create pdf")
+            }
+
             // send request only when it have some data else raise error
             // get the url to downloading link and open in new tab
-        })
+        });
     </script>
 </body>
 </html>
