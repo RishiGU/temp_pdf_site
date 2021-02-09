@@ -27,7 +27,7 @@ def create_pdf():
 
     # file sanitization check
     for file in files :
-        if sanitize(file.filename).rsplit('.',1)[1].upper() not in ['JPG','PNG','JPEG'] : abort(400, 'Wrong file type') 
+        if sanitize(file.filename).rsplit('.',1)[1].upper() not in ['PNG','JPG','JPEG','JIFF','TIFF'] : abort(400, 'Wrong file type') 
 
     # creating the folder to save the file 
     if not os.path.exists(folder_to_save) : os.mkdir(folder_to_save)
@@ -36,13 +36,13 @@ def create_pdf():
     for image in files : image.save(os.path.join(folder_to_save, sanitize(image.filename) ) )
     
     # formation of pdf get_data from - folder_to_save
+    pdf_size = pdf.create_compressed_pdf(folder_to_save,pdf_name)
     # save in app.config['UPLOAD_FOLDER']
-
 
     # save the pdf and delete the folder
     if os.path.exists(folder_to_save) : shutil.rmtree(folder_to_save)
 
-    return jsonify(pdf_name)
+    return jsonify(pdf_name,pdf_name)
 
 @app.route('/download')
 def download():
