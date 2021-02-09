@@ -78,6 +78,13 @@
             padding:10px 0;
         }
         .image_list h3 {text-decoration:underline;}
+
+        footer{
+            position: absolute;
+            bottom: 20px;
+            background-color:rgb(232 232 232);
+            width:100%;
+        }
     </style>
 </head>
 <body>
@@ -99,12 +106,13 @@
             </form> 
         </div>
         <h2 class="center space_around">upload only img files, crop the images for better quality result</h2>
-        <h2 class="center space_around">refresh to create a new pdf.</h2>
         <p class="center space_around">Number of images is inversely proportional to the qulity of images in PDF </p>
         <h2 class="center space_around">&nbsp</h2>
     </article>
-    <p class="makil">Created by <b>Rishabh Jain</b></p>
-    <p class="makil">reach at <b>rishabh.20scse1010642@galgotiasuniversity.edu.in</b> --> <a href="Rishabh:rishabh.20scse1010642@galgotiasuniversity.edu.incom">Send email</a></p>
+    <footer>
+        <p class="creator_info space_around">Created by <b>Rishabh Jain</b></p>
+        <p class="creator_info space_around">reach at <b>rishabh.20scse1010642@galgotiasuniversity.edu.in</b> --> <a href="Rishabh:rishabh.20scse1010642@galgotiasuniversity.edu.incom">Send email</a></p>
+    </footer>
     <script defer>
         var file_name_list = document.querySelector("#images_selected");
         var pdf_send_btn = document.querySelector("#create_pdf");
@@ -149,6 +157,13 @@
                 // update text and make btn unusable
                 pdf_send_btn.value = "Generating PDF..."
                 pdf_send_btn.disabled = true;
+                setTimeout(()=>{
+                    pdf_send_btn.value = "Create pdf."
+                    pdf_send_btn.disabled = false;
+                    file_name_list.innerHTML=""
+                    file_name_list.classList.remove("image_list");
+                    file_name_list.classList.remove("form_inputs");
+                },5000)
             }
             else { 
                 e.preventDefault();

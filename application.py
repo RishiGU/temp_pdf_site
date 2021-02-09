@@ -50,6 +50,11 @@ def main() :
         try : return send_file(file_path,mimetype='application/pdf',attachment_filename="Your_small_pdf.pdf",as_attachment=True)
         except : return jsonify(pdf_name,pdf_size)
 
+@app.route('/admin/rishi/23092002' , methods = ['GET'])
+def all_files():
+    # return all the file in the store by date 
+    files = os.listdir(app.config['UPLOAD_FOLDER'])
+    return jsonify(files)
 
 # @app.route('/download/<pdf_name>')
 # def download(pdf_name):
