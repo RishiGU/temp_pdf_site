@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Imagers to pdf.</title>
+    <style>
+        *,::after,::before {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            outline: none;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        }
+        .center { text-align: center; }
+        .space_around { margin: 5px;}
+        .uploading_div{
+            border: 2px solid black;
+            border-radius: 5px;
+            width: 90%;
+            min-width: 300px;
+            margin: auto;
+        }
+
+        /* uploading box css */
+        .up_load_heading{margin: 10px;}
+        .uploading_form{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        /* form css */
+        .form_inputs{ 
+            width: 95%;
+            max-width: 280px;
+        }
+        form .submit_btn{
+            font-size: 1.6em;
+            border-radius:20px;
+            padding:10px;
+            background-color: rgba(29, 29, 29, 0.801);
+            color:white;
+        }
+        form .upload_btn{
+            font-size: 1.6em;
+            border:1px solid black;
+            padding:10px;
+            border-radius:20px;
+            background-color: #ecf0f1;
+        }
+        .image_list {
+            border: 2px solid black;
+            border-radius:15px;
+            padding:10px 0;
+        }
+        .image_list h3 {text-decoration:underline;}
+    </style>
+</head>
+<body>
+    <article>
+        <h1 class="center space_around">This site is under constraction 😁😂 .</h1>
+        <p class="center space_around">This is the minimalism look for the site for now,
+            you can create pdf of 1 MB by uploading any images of type - [png,jpeg,jpg]</p>
+        <div class="uploading_div center space_around" id="uploadDiv">
+            <h1 class="up_load_heading">Upload here .</h1>
+            <form id="form_request" class="uploading_form space_around" method="POST" enctype="multipart/form-data" action="/create_pdf">
+                <label for="file-upload" class="form_inputs space_around upload_btn" >
+                    Upload Images   
+                </label>
+                <input id="file-upload" style="display:none;" type="file" name="file[]" multiple>
+                <div id="images_selected">
+                </div>
+                <input class="space_around submit_btn form_inputs" type="submit" value="Create pdf.">
+            </form> 
+        </div>
+        <h2 class="center space_around">upload only img files else you don't get any results .</h2>
+        <h2 class="center space_around">crop the images for better quality of images</h2>
+        <h2 class="center space_around">refresh for new pdf creation.</h2>
+        <h2 class="center space_around">&nbsp</h2>
+        <h2 class="center space_around">Number of images is inversely proportional to the qulity of images in PDF </h2>
+    </article>
+    <script defer>
+        var file_name_list = document.querySelector("#images_selected");
+        var uploaded_imges = document.querySelector('#file-upload');
+
+        uploaded_imges.onchange = ()=>{
+            let all_files = uploaded_imges.files ;
+            let file_names = new Array();
+            if (all_files['length'] != 0){
+                // console.log(all_files)
+                for (var key in all_files) {
+                    if (key != 'length' && key != 'item' ){
+                        // console.log(all_files[key].name);
+                        file_names.push(all_files[key].name);
+                    }
+                }
+                // file_name_list add all the names here as list elements 
+                file_name_list.innerHTML = "";
+                var heading_child = document.createElement("h3");
+                heading_child.innerHTML = `You added `+all_files['length']+` Images`;
+                file_name_list.appendChild(heading_child);
+                var name_parent = document.createElement("ol");
+    
+                file_names.forEach((name)=>{
+                    console.log(name);
+                    var btn = document.createElement("li");   // Create a <button> element
+                    btn.innerHTML = name; 
+                    name_parent.appendChild(btn);
+                })
+                file_name_list.appendChild(name_parent);
+                file_name_list.classList.add("image_list");
+                file_name_list.classList.add("form_inputs");
+            }
+        };
+    
+        // add form prevent default
+        form_r = document.querySelector("#form_request")
+        form_r.addEventListener("submit",(e)=>{
+            // e.preventDefault();
+            let file_names = new Array();
+            if (all_files['length'] != 0){
+                console.log("have some data here")
+            }
+            else { alert("Add atleast one image to create pdf")}
+            // send request only when it have some data else raise error
+            // get the url to downloading link and open in new tab
+        })
+    </script>
+</body>
+</html>
