@@ -1,5 +1,5 @@
 # python application.py
-from flask import Flask,request,jsonify,render_template,abort,send_file
+from flask import Flask,request,jsonify,render_template,abort,send_file,url_for,redirect
 import shutil,os,uuid
 from sanitize_filename import sanitize # https://pypi.org/project/sanitize-filename/#description # pip install sanitize_filename
 from PDF import pdf
@@ -56,11 +56,11 @@ def all_files():
     # format [[name ,date,link],[...]]
 
     # create list of data 
-    data_list = [[i,os.stat(os.path.join(app.config['UPLOAD_FOLDER'],i)).st_mtime,f'/download/{i}'] for i in files ]
+    data_list = [[i,os.stat(os.path.join(app.config['UPLOAD_FOLDER'],i)).st_mtime,f'/download/{i}',f'/delete/{i}'] for i in files ]
     # sorting by time
     data_list = sorted(data_list ,key=lambda a : a[1],reverse=True)
     # create readable data
-    data_list = [[i[0],time.ctime(i[1]),i[2]] for i in data_list]
+    data_list = [[i[0],time.ctime(i[1]),i[2],i[3]] for i in data_list]
 
     if data_list:
         return render_template('all_files.html' ,len = len(data_list), data_list = data_list)
@@ -69,12 +69,19 @@ def all_files():
 
 @app.route('/download/<pdf_name>')
 def download(pdf_name):
-    print("download the file ")
+    # print("download the file ")
     file_path = os.path.join(app.config['UPLOAD_FOLDER'],pdf_name)
     try :
         return send_file(file_path,mimetype='application/pdf',as_attachment=True)
     except :
         return ""
+
+@app.route('/delete/<pdf_name>')
+def delete(pdf_name):
+    # print("download the file ")
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'],pdf_name)
+    os.remove(file_path)
+    return redirect(url_for("all_files"))
 
 
 # app.run(host='0.0.0.0', port=5000, threaded=True,use_reloader=True)

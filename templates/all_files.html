@@ -35,6 +35,10 @@
             margin: 5px ;
             text-align: center;
         }
+        .links{
+            display: flex;
+            flex-direction: column;
+        }
         a {
             text-decoration: none;
             border: 1px solid black;
@@ -42,8 +46,12 @@
             font-size: 1em;
             border-radius: 5px;
             padding: 5px;
-            margin: 15px;
             color:black;
+        }
+        .del{
+            background-color :rgb(235, 83, 121);
+            margin-bottom: 15px;
+
         }
     </style>
 </head>
@@ -57,7 +65,10 @@
                 <p class="date_of_formation">
                     {{data_list[i][1]}}
                 </p>
-                <a href={{data_list[i][2]}}>link to download file</a>
+                <dev class="links">
+                    <a href={{data_list[i][2]}}>link to download file</a>
+                    <a class="del" href={{data_list[i][3]}}>link to delete file</a>
+                </dev>
             </div>
         {%endfor%} 
     </div>
