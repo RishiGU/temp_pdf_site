@@ -77,8 +77,7 @@ def download(pdf_name):
         return ""
 
 
-# add route to see all the saved files and download them 
-# add route to see and delete it  
+app.run(host='0.0.0.0', port=5000, threaded=True,use_reloader=True)
 
 if __name__ == "__main__":
     # app.config["DEBUG"] = True
