@@ -82,8 +82,7 @@ def download(pdf_name):
 
 if __name__ == "__main__":
     # app.config["DEBUG"] = True
-    app.run()
-
+    app.run(threaded=True)
 
 # for unix
 # export FLASK_APP=api.py 
