@@ -84,11 +84,11 @@ def delete(pdf_name):
     return redirect(url_for("all_files"))
 
 
-# app.run(host='0.0.0.0', port=5000, threaded=True,use_reloader=True)
 
 if __name__ == "__main__":
-    # app.config["DEBUG"] = True
-    app.run(threaded=True,debug=True, use_reloader=True)
+    # app.debug = True
+    app.run(host = '0.0.0.0',port=5005)
+    # app.run(threaded=True,use_reloader=True)
 
 # for unix
 # export FLASK_APP=api.py 
