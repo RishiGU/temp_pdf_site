@@ -6,7 +6,6 @@ from PDF import pdf
 import time
 
 app = Flask(__name__)   
-app.config["DEBUG"] = True
 app.config['UPLOAD_FOLDER'] = 'static\\pdf_store'
 
 # to send the home page
@@ -82,6 +81,7 @@ def download(pdf_name):
 # add route to see and delete it  
 
 if __name__ == "__main__":
+    # app.config["DEBUG"] = True
     app.run()
 
 
