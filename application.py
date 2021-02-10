@@ -87,7 +87,7 @@ def delete(pdf_name):
 
 if __name__ == "__main__":
     # app.debug = True
-    app.run(host = '0.0.0.0',port=5005)
+    app.run(host = '0.0.0.0')
     # app.run(threaded=True,use_reloader=True)
 
 # for unix
