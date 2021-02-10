@@ -15,7 +15,7 @@ class pdf:
         self.search_for_image_in_dir(os.listdir(files_lacation))
     
     def open_convert(self,image_path):
-        to_print = image_path.rsplit('\\',1)[1]
+        to_print = image_path.rsplit('/',1)[1]
         # print(f"working on '{to_print}' {random.choice(['😀','😁','😎','🤗','😃'])}")
         image = Image.open(image_path)
         return image.convert('RGB')
@@ -36,7 +36,7 @@ class pdf:
     def save_compressed_pdf(self,size_needed):
         # set the quality variable at your desired level, The more the value of quality variable and lesser the compression 
         quality = 80 # for about same size
-        path_to_save = self.files_lacation.rsplit('\\',1)[0]
+        path_to_save = self.files_lacation.rsplit('/',1)[0]
         self.pdf_name = os.path.join(path_to_save,self.pdf_name)
         def savepdf(quality):
             if len(self.imagelist) > 1:
