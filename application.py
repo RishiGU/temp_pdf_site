@@ -6,7 +6,7 @@ from PDF import pdf
 import time
 
 app = Flask(__name__)   
-app.config['UPLOAD_FOLDER'] = 'static\\pdf_store'
+app.config['UPLOAD_FOLDER'] = 'static/pdf_store'
 
 # to send the home page
 @app.route('/', methods=['GET','POST'])
