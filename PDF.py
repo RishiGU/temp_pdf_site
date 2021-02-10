@@ -26,6 +26,7 @@ class pdf:
             image_path = os.path.join(self.files_lacation,i)
             # check if file is not a directory and if exist and is type of image
             if not os.path.isdir(image_path) and os.path.exists(image_path) and image_path.rsplit('.',1)[1].upper() in self.image_type:
+                print(self.open_convert(image_path))
                 self.imagelist.append(self.open_convert(image_path))
     
     @property
@@ -40,12 +41,14 @@ class pdf:
         self.pdf_name = os.path.join(path_to_save,self.pdf_name)
         def savepdf(quality):
             if len(self.imagelist) > 1:
+                print(len(self.imagelist))
                 self.imagelist[0].save(self.pdf_name,
                                         save_all=True,
                                         append_images=self.imagelist[1:],
                                         optimize = True,
                                         quality = quality)
             else:
+                print(len(self.imagelist))
                 self.imagelist[0].save(self.pdf_name,
                                         save_all=True,
                                         optimize = True,
