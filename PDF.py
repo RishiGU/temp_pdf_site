@@ -1,6 +1,7 @@
 from PIL import Image
 import os,math,argparse,random
 from time import sleep as nap
+from pathlib import Path
 # pip3 install PyMuPDF Pillow
 
 class pdf:
@@ -15,10 +16,12 @@ class pdf:
         self.search_for_image_in_dir(os.listdir(files_lacation))
     
     def open_convert(self,image_path):
-        to_print = image_path.rsplit('/',1)[1]
+        to_print = str(Path(image_path).parent)
+        # .rsplit('/',1)[1]
         # print(f"working on '{to_print}' {random.choice(['😀','😁','😎','🤗','😃'])}")
         image = Image.open(image_path)
-        return image.convert('RGB')
+        # return image.convert('RGB')
+        return image.convert('L')
 
     def search_for_image_in_dir(self,name_list):
         self.imagelist = []
@@ -37,7 +40,8 @@ class pdf:
     def save_compressed_pdf(self,size_needed):
         # set the quality variable at your desired level, The more the value of quality variable and lesser the compression 
         quality = 80 # for about same size
-        path_to_save = self.files_lacation.rsplit('/',1)[0]
+        path_to_save = str(Path(self.files_lacation).parent)
+        # .rsplit('/',1)[0]
         self.pdf_name = os.path.join(path_to_save,self.pdf_name)
         def savepdf(quality):
             if len(self.imagelist) > 1:

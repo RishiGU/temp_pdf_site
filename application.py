@@ -6,9 +6,10 @@ from PDF import pdf
 import time
 
 app = Flask(__name__)   
-app.config['UPLOAD_FOLDER'] = 'static/pdf_store'
+app.config['UPLOAD_FOLDER'] = os.path.join('static','pdf_store')
+app.config["DEBUG"] = True
 
-# to send the home page
+# to send the home page and convert into pdf on post request
 @app.route('/', methods=['GET','POST'])
 def main() :
     print(request.method)
@@ -49,6 +50,7 @@ def main() :
         try : return send_file(file_path,mimetype='application/pdf',attachment_filename="Your_small_pdf.pdf",as_attachment=True)
         except : return jsonify(pdf_name,pdf_size)
 
+# for cheking the flow of files 
 @app.route('/admin/rishi/23092002' , methods = ['GET'])
 def all_files():
     # return all the file in the store by date 
@@ -62,20 +64,16 @@ def all_files():
     # create readable data
     data_list = [[i[0],time.ctime(i[1]),i[2],i[3]] for i in data_list]
 
-    if data_list:
-        return render_template('all_files.html' ,len = len(data_list), data_list = data_list)
-    else :
-        return ""
+    return render_template('all_files.html' ,len = len(data_list), data_list = data_list)
 
+# files check download 
 @app.route('/download/<pdf_name>')
 def download(pdf_name):
     # print("download the file ")
     file_path = os.path.join(app.config['UPLOAD_FOLDER'],pdf_name)
-    try :
-        return send_file(file_path,mimetype='application/pdf',as_attachment=True)
-    except :
-        return ""
+    return send_file(file_path,mimetype='application/pdf',as_attachment=True)
 
+# file check deleter
 @app.route('/delete/<pdf_name>')
 def delete(pdf_name):
     # print("download the file ")
@@ -86,9 +84,11 @@ def delete(pdf_name):
 
 
 if __name__ == "__main__":
-    # app.debug = True
-    app.run(host = '0.0.0.0')
+    # app.run(host = '0.0.0.0')
+    app.run()
     # app.run(threaded=True,use_reloader=True)
+    # app.run(debug=True, use_debugger=True, use_reloader=True)
+
 
 # for unix
 # export FLASK_APP=api.py 
