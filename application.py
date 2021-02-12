@@ -27,6 +27,7 @@ def main() :
 
         # file sanitization check
         for file in files :
+            # print(file.filename)
             if sanitize(file.filename).rsplit('.',1)[1].upper() not in ['PNG','JPG','JPEG','JIFF','TIFF'] : abort(400, 'Wrong file type') 
 
         # creating the folder to save the file 
@@ -40,7 +41,7 @@ def main() :
         # save in app.config['UPLOAD_FOLDER']
 
         # save the pdf and delete the folder
-        if os.path.exists(folder_to_save) : shutil.rmtree(folder_to_save)
+        # if os.path.exists(folder_to_save) : shutil.rmtree(folder_to_save)
 
         # return send_from_directory(directory = app.config['UPLOAD_FOLDER'] ,filename = pdf_name)
         # (directory = app.config['UPLOAD_FOLDER'] ,filename = pdf_name)
@@ -81,6 +82,12 @@ def delete(pdf_name):
     os.remove(file_path)
     return redirect(url_for("all_files"))
 
+@app.route('/testing',methods=['POST'])
+def testing():
+    print(request.form)
+    for i in request.form.getlist('files'):
+        print(dir(i))
+    return ""
 
 
 if __name__ == "__main__":
