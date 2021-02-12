@@ -37,6 +37,9 @@
     <!-- Website to visit when clicked in fb or WhatsApp-->
     <meta property="og:url" content="https://pdf1mb.herokuapp.com/">
 
+    <!-- for compression -->
+    <script defer type="text/javascript" src="https://cdn.jsdelivr.net/npm/browser-image-compression@1.0.13/dist/browser-image-compression.js"></script>
+
     <style>
         *,::after,::before {
             padding: 0;
@@ -107,7 +110,7 @@
                 <label for="file-upload" class="form_inputs space_around upload_btn" >
                     Upload Images   
                 </label>
-                <input id="file-upload" style="display:none;" type="file" name="file[]" multiple>
+                <input id="file-upload" style="display:none;" type="file" name="file[]" accept=".png, .jpg, .jpeg, .jfif" multiple>
                 <div id="images_selected">
                 </div>
                 <input id="create_pdf" class="space_around submit_btn form_inputs" type="submit" value="Create pdf.">
@@ -143,13 +146,14 @@
              (adsbygoogle = window.adsbygoogle || []).push({});
         </script>
     </article>
+
     <script defer>
         var file_name_list = document.querySelector("#images_selected");
         var pdf_send_btn = document.querySelector("#create_pdf");
         var uploaded_imges = document.querySelector('#file-upload');
 
-        uploaded_imges.onchange = ()=>{
-            let all_files = uploaded_imges.files ;
+        uploaded_imges.onchange = (event)=>{
+            let all_files = event.target.files ;
             let file_names = new Array();
             if (all_files['length'] != 0){
                 // console.log(all_files)
@@ -165,7 +169,7 @@
                 heading_child.innerHTML = `You added `+all_files['length']+` Images`;
                 file_name_list.appendChild(heading_child);
                 var name_parent = document.createElement("ol");
-    
+                
                 file_names.forEach((name)=>{
                     // console.log(name);
                     var btn = document.createElement("li");   // Create a <button> element
@@ -175,33 +179,81 @@
                 file_name_list.appendChild(name_parent);
                 file_name_list.classList.add("image_list");
                 file_name_list.classList.add("form_inputs");
-            }
+            
+            // compressing files 😁
+            var options = {
+                maxSizeMB: 1,
+                maxWidthOrHeight: 1920,
+                useWebWorker: true,
+                fileType: 'jpg'}
+            let new_files = {};
+            // var new_files = new FileList();
+            console.log(event.target.files)
+
+            const make_new_list = async _ => {
+                console.log('Start')
+                pdf_send_btn.value = "Compressing Files ..."
+                pdf_send_btn.disabled = true;
+                for (let index = 0; index < event.target.files['length']; index++) {    
+                    const imageFile = event.target.files[index];
+                    // console.log(event.target.files[index])
+                    let before = `File size before : ${Math.round((imageFile.size / 1024 / 1024)*100)/100} MB`;
+                    await imageCompression(imageFile, options)
+                        .then((compressedFile)=>{
+                            console.log(before,`after ${Math.round((compressedFile.size / 1024 / 1024)*100)/100} MB`); // smaller than maxSizeMB
+                            event.target.files[index] = new File([compressedFile],compressedFile.name) ; // return uploadToServer(compressedFile); // write your own logic
+                            console.log(new File([compressedFile],compressedFile.name))
+                            // console.log(new_files[index])
+                            new_files = Object.assign( new File([compressedFile],compressedFile.name), new_files)
+                        })
+                        .catch(e => console.error(e.message));
+                }
+            };
+            make_new_list().then(async _=> {
+                new_files = await Object.assign({'length':  event.target.files['length'] }, new_files);
+                // event.target.new_files = new_files;
+                // uploaded_imges.value = new_files;
+                // console.log(new_files);
+                pdf_send_btn.value = "Create pdf.";
+                pdf_send_btn.disabled = false;
+                console.log(uploaded_imges.value)
+
+                // testing
+                const form_Data = new FormData();
+                console.log(new_files)
+                form_Data.append("files",new_files[0])
+
+                fetch('/testing',{
+                    method : 'POST',
+                    body : form_Data})
+                    .catch(e=>{console.log(e)})
+            })
+
         };
-    
+    }
+        
         // add form prevent default
         form_r = document.querySelector("#form_request")
         form_r.addEventListener("submit",(e)=>{
+            // method="POST" action="/"
             let all_files = uploaded_imges.files ;
             if (all_files['length'] != 0){
-                console.log("have some data here")
+                // console.log("have some data here")
                 // update text and make btn unusable
                 pdf_send_btn.value = "Generating PDF..."
                 pdf_send_btn.disabled = true;
                 setTimeout(()=>{
                     pdf_send_btn.value = "Create pdf."
                     pdf_send_btn.disabled = false;
-                    file_name_list.innerHTML=""
+                    file_name_list.innerHTML="";
+                    uploaded_imges.value = "";
                     file_name_list.classList.remove("image_list");
                     file_name_list.classList.remove("form_inputs");
                 },5000)
             }
             else { 
-                e.preventDefault();
                 alert("Add atleast one image to create pdf")
             }
-
-            // send request only when it have some data else raise error
-            // get the url to downloading link and open in new tab
         });
     </script>
 </body>
