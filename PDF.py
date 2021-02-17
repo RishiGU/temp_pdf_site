@@ -20,8 +20,8 @@ class pdf:
         # .rsplit('/',1)[1]
         # print(f"working on '{to_print}' {random.choice(['😀','😁','😎','🤗','😃'])}")
         image = Image.open(image_path)
-        # return image.convert('RGB')
-        return image.convert('L')
+        return image.convert('RGB')
+#         return image.convert('L')
 
     def search_for_image_in_dir(self,name_list):
         self.imagelist = []
